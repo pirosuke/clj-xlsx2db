@@ -23,14 +23,20 @@
 
 (defn get-table-column-map
   [ini-settings]
-  (let [table-cols (get-postgresql-table-columns (:tables (:db ini-settings)))]
+  (let [table-cols (get-postgresql-table-columns (str/split (:tables (:db ini-settings)) #","))]
     (reduce (fn [m col]
               (assoc m
                      (keyword (:table_name col))
                      (conj (get m (keyword (:table_name col)) []) (:column_name col)))) {} table-cols)))
 
 (defn export-tables
-  [ini-settings])
+  [ini-settings]
+  (let [col-map (get-table-column-map ini-settings)
+        wb (ss/create-workbook "Sheet1" [])]
+    (doseq [[table-name cols] col-map]
+      (-> (ss/add-sheet! wb (name table-name))
+        (ss/add-row! cols))
+      (ss/save-workbook! (:output-path (:xlsx ini-settings)) wb))))
 
 (defn clean-import-tables
   [ini-settings])
@@ -47,7 +53,7 @@
       {:user (:dbuser db-settings)
        :password (:dbpass db-settings)
        :subname (:dburl db-settings)
-       :protocol (:dbprotocol db-settings)})
+       :subprotocol (:dbprotocol db-settings)})
     (cond
       (= command "db2ss") (export-tables ini-settings)
       (= command "ss2db") (clean-import-tables ini-settings))))
