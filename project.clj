@@ -1,6 +1,6 @@
-(defproject clj-xlsx2db "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject clj-xlsx2db "0.1.0"
+  :description "Application to import table data from Excel files to database tables."
+  :url "https://github.com/pirosuke/clj-xlsx2db"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
