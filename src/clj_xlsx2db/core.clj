@@ -41,7 +41,7 @@
                    (:data_type col))) {} table-column-list))
 
 (defn cast-columns
-  "add casts according to column data type"
+  "add casts according to column data type.(jsonb only for now)"
   [column-type-map row-map]
   (into {} (for [[col-name data] row-map]
              [col-name (cond
@@ -73,7 +73,7 @@
         (cond
           (> (count rows) 1) (insert table-name
                                      (values (for [row data-rows] (cast-columns column-type-map (zipmap header-row (map #(ss/read-cell %) row)))))))
-        (println (str "inserted: " table-name))))))
+        (println (str "imported table: " table-name))))))
 
 (defn -main
   [& args]
