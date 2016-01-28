@@ -46,6 +46,7 @@
   (into {} (for [[col-name data] row-map]
              [col-name (cond
                          (= (get column-type-map (keyword col-name)) "jsonb") (raw (str "'" data "'::jsonb"))
+                         (some #(= (get column-type-map (keyword col-name)) %) ["timestamp" "timestamp without time zone"]) (raw (str "'" data "'::timestamp"))
                          :else data)])))
 
 (defn add-data-rows
