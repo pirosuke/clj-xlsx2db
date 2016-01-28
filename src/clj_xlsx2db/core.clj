@@ -48,14 +48,21 @@
                          (= (get column-type-map (keyword col-name)) "jsonb") (raw (str "'" data "'::jsonb"))
                          :else data)])))
 
-(defn export-table-info
+(defn add-data-rows
+  [sheet table-name cols]
+  (doseq [row (select table-name)]
+    (ss/add-row! sheet (map #(get row (keyword (:column_name %))) cols))))
+
+(defn export-tables
   "export table and column names to Excel file"
-  [ini-settings]
+  [ini-settings with-data]
   (let [col-map (get-table-column-map ini-settings)
         wb (ss/create-workbook "Sheet1" [])]
     (doseq [[table-name cols] col-map]
-      (-> (ss/add-sheet! wb (name table-name))
-        (ss/add-row! (map :column_name cols)))
+      (let [sheet (ss/add-sheet! wb (name table-name))]
+        (ss/add-row! sheet (map :column_name cols))
+        (cond
+          with-data (add-data-rows sheet table-name cols)))
       (ss/save-workbook! (:export-path (:xlsx ini-settings)) wb))))
 
 (defn clean-import-tables
@@ -89,6 +96,7 @@
        :subname (:dburl db-settings)
        :subprotocol (:dbprotocol db-settings)})
     (cond
-      (= command "export-table-info") (export-table-info ini-settings)
+      (= command "export-table-info") (export-tables ini-settings false)
+      (= command "export-table") (export-tables ini-settings true)
       (= command "import-table") (clean-import-tables ini-settings))))
 
