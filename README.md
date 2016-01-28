@@ -10,6 +10,10 @@ Use "export-table-info" to export template Excel files to write in your data.
 
     lein run export-table-info <ini-file-path>
 
+Use "export-table" to export Excel files with data.
+
+    lein run export-table <ini-file-path>
+
 Use "import-table" to import your data from Excel.
 
     lein run import-table <ini-file-path>
